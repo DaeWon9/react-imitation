@@ -1,5 +1,6 @@
-const app = document.getElementById('app');
+import { App } from './App';
 
-if (app) {
-  app.innerHTML = `<h1>Hello, Vanilla TypeScript with Vite!</h1>`;
+const root = document.getElementById('app');
+if (root) {
+  root.appendChild(App());
 }
