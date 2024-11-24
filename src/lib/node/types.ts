@@ -7,7 +7,6 @@ export type Props = {
     | object
     | ((event: Event) => void)
     | undefined;
-  className?: string;
 };
 
 // 자식 요소 타입 정의
