@@ -1,6 +1,26 @@
 import { CreateElementProps } from './types';
 import { flattenArray } from './utils';
 
+/**
+ * createElement 함수는 동적으로 HTML 요소를 생성하고,
+ * 지정된 속성(props), 자식(children) 및 이벤트를 추가하는 역할을 합니다.
+ *
+ * @param {TagType} param.tag - 생성할 HTML 태그 이름 (예: 'div', 'button', 'section')
+ * @param {string} [param.className] - 요소에 추가할 CSS 클래스 이름 (선택 사항)
+ * @param {Object} [param.props] - 요소에 설정할 속성들 (선택 사항)
+ * @param {Children[]} [param.children] - 요소의 자식 요소들 (문자열 또는 HTMLElement 배열)
+ *
+ * @returns {HTMLElement} 생성된 HTML 요소
+ *
+ * 예시:
+ * const button = createElement({
+ *   tag: 'button',
+ *   className: 'btn-primary',
+ *   props: { onClick: () => alert('Clicked!') },
+ *   children: ['Click me']
+ * });
+ * document.body.appendChild(button);
+ */
 export function createElement({
   tag,
   className,
