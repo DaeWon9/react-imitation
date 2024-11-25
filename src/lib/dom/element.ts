@@ -1,5 +1,5 @@
+import { flattenArray } from '../utils/arrayUtil';
 import { CreateElementProps } from './types';
-import { flattenArray } from './utils';
 
 /**
  * createElement 함수는 동적으로 HTML 요소를 생성하고,

@@ -1,4 +1,4 @@
-import { Children } from './types';
+import { Children } from '../dom';
 
 // 배열 평탄화 함수
 export function flattenArray(array: Children[]): Children[] {
