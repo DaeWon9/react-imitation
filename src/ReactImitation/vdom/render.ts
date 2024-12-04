@@ -1,6 +1,6 @@
 import { updateDOM } from '../dom/updateDom';
 import { VDOM } from '../types/vdom';
-import { setRoot, setCreateVDOM } from './store';
+import { setRoot, setCreateVDOM, setCurrentComponent } from './store';
 
 /**
  * render 함수는 주어진 `createVDOM` 함수와 `rootElement`를 바탕으로 가상 DOM을 렌더링합니다.
@@ -25,6 +25,9 @@ export function render(
 
   // rootElement를 설정
   setRoot(rootElement);
+
+  // CurrentComponent를 설정
+  setCurrentComponent(rootElement);
 
   // createVDOM을 설정
   setCreateVDOM(createVDOM);

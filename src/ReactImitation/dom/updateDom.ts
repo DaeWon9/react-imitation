@@ -1,6 +1,13 @@
 import { TextVDOM, VDOM } from '../types/vdom';
 import { isTextVDOM } from '../utils/typeGuard';
-import { getNewVDOM, getRoot, getVDOM, setVDOM } from '../vdom/store';
+import {
+  getNewVDOM,
+  getRoot,
+  getVDOM,
+  resetStateIndex,
+  setCurrentComponent,
+  setVDOM,
+} from '../vdom/store';
 import { createDOM } from './createDom';
 import { setAttributes } from './setAttributes';
 
@@ -19,6 +26,8 @@ export function updateDOM(
   nextVDOM: VDOM = getNewVDOM(),
   prevVDOM: VDOM = getVDOM()
 ): void {
+  resetStateIndex();
+  setCurrentComponent($parent);
   updateElement($parent, nextVDOM, prevVDOM);
   setVDOM(nextVDOM);
 }
