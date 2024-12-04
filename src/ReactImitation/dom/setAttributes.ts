@@ -19,35 +19,19 @@ export function setAttributes(
     return;
   }
 
-  // 기존에 설정된 속성을 확인하여, 필요한 변경 작업을 합니다.
-  if ($el.attributes?.length) {
-    for (const attr of Object.values($el.attributes)) {
-      const tmpAttrName = attr.name as keyof DOMAttribute;
-
-      // 속성값이 주어지면 기존 속성 값을 비교하고, 필요시 업데이트 또는 삭제합니다.
-      if (props) {
-        const propValue = `${props[tmpAttrName]}`;
-        if (!propValue || propValue === 'undefined') {
-          $el.removeAttribute(attr.name); // 값이 없으면 속성을 삭제합니다.
-        } else if (Object.is(propValue, attr.value)) {
-          delete props[tmpAttrName]; // 값이 동일하면 속성값을 삭제합니다.
-        }
-      } else {
-        $el.removeAttribute(attr.name); // props가 없으면 속성을 삭제합니다.
-      }
-    }
-  }
-
-  // 새로운 속성값을 설정합니다.
   if (props) {
     for (const [propName, propValue] of Object.entries(props)) {
       const tmpPropName = propName as keyof DOMAttribute;
 
-      // className 속성의 경우 makeClassName 함수를 사용하여 처리합니다.
       if (tmpPropName === 'className') {
-        $el[tmpPropName] = makeClassName(propValue);
+        const newClassName = makeClassName(propValue);
+        if ($el[tmpPropName] !== newClassName) {
+          $el[tmpPropName] = newClassName;
+        }
       } else {
-        $el[tmpPropName] = propValue; // 나머지 속성은 직접 설정합니다.
+        if ($el[tmpPropName] !== propValue) {
+          $el[tmpPropName] = propValue;
+        }
       }
     }
   }
