@@ -1,20 +1,19 @@
-import { createElement } from './lib';
+import { VDOM } from './ReactImitation/types/vdom';
+import { createElement } from './ReactImitation/vdom';
 
-export const App = (): HTMLElement => {
+export const App = (): VDOM => {
   return createElement({
-    tag: 'section',
-    className: 'section-class',
-    props: { style: { backgroundColor: '#f4f4f4', padding: '20px' } },
+    el: 'div',
     children: [
+      'hi',
+      createElement({ el: 'li', children: ['1'] }),
+      createElement({ el: 'li', children: ['1'] }),
       createElement({
-        tag: 'header',
-        children: [createElement({ tag: 'h1', children: ['Element Test'] })],
-      }),
-      createElement({
-        tag: 'button',
+        el: 'button',
         props: {
-          onClick: (event) => {
-            console.log('Button clicked', event);
+          className: 'test',
+          onclick: () => {
+            console.log('clicked');
           },
         },
         children: ['Click me'],
