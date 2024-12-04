@@ -6,6 +6,13 @@ import {
   stateStore,
 } from '../vdom/store';
 
+/**
+ * useState 훅은 컴포넌트에 상태를 추가하고,
+ * 상태 업데이트 함수와 함께 반환합니다.
+ *
+ * @param initialState - 초기 상태 값
+ * @returns [state, setState] - 현재 상태와 상태를 업데이트하는 함수
+ */
 export function useState<T>(
   initialState: T
 ): [T, (newState: T | ((prev: T) => T)) => void] {
