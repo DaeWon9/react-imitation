@@ -1,6 +1,5 @@
 import { App } from './App';
+import { render } from './ReactImitation/vdom';
 
 const root = document.getElementById('app');
-if (root) {
-  root.appendChild(App());
-}
+render(() => App(), root);

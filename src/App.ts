@@ -1,23 +1,71 @@
-import { createElement } from './lib';
+import { useState } from './ReactImitation/hooks';
+import { createElement } from './ReactImitation/vdom';
 
-export const App = (): HTMLElement => {
+const TestComponent = (props: any) => {
+  const [testState, setTestState] = useState(1);
+
   return createElement({
-    tag: 'section',
-    className: 'section-class',
-    props: { style: { backgroundColor: '#f4f4f4', padding: '20px' } },
+    el: 'div',
+    props: { className: 'test-component' },
     children: [
+      `innerState: ${testState}`,
       createElement({
-        tag: 'header',
-        children: [createElement({ tag: 'h1', children: ['Element Test'] })],
+        el: 'br',
+      }),
+      `outterState: ${props.count}`,
+      createElement({
+        el: 'br',
       }),
       createElement({
-        tag: 'button',
+        el: 'button',
         props: {
-          onClick: (event) => {
-            console.log('Button clicked', event);
+          className: 'test',
+          onclick: () => {
+            setTestState(testState + 1);
+            console.log('clicked');
+          },
+        },
+        children: ['inner State'],
+      }),
+      createElement({
+        el: 'button',
+        props: {
+          key: 1,
+          className: 'test',
+          onclick: () => {
+            props.setCount(props.count + 1);
+            console.log('clicked');
+          },
+        },
+        children: ['outter State'],
+      }),
+    ],
+  });
+};
+
+export const App = () => {
+  const [count, setCount] = useState(1);
+
+  return createElement({
+    el: 'div',
+    children: [
+      'hi',
+      createElement({ el: 'li', children: [`${count}`] }),
+      createElement({ el: 'li', children: [`${count}`] }),
+      createElement({
+        el: 'button',
+        props: {
+          className: 'test',
+          onclick: () => {
+            setCount(count + 1);
+            console.log('clicked');
           },
         },
         children: ['Click me'],
+      }),
+      TestComponent({
+        count: count,
+        setCount: setCount,
       }),
     ],
   });
