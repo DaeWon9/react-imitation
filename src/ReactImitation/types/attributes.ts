@@ -14,6 +14,10 @@ export interface AnchorDOMAttribute extends DOMAttribute {
   href: string;
 }
 
+export interface KeyAttribute extends DOMAttribute {
+  key?: string | number;
+}
+
 export interface UnknownAttribute {
   [prop: string]: unknown;
 }
@@ -22,5 +26,6 @@ export type ReactImitationProps =
   | DOMAttribute
   | InputDOMAttribute
   | AnchorDOMAttribute
+  | KeyAttribute
   | UnknownAttribute
   | null;

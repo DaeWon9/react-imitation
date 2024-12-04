@@ -1,5 +1,5 @@
 import { TextVDOM, VDOM } from '../types/vdom';
-import { isTextVDOM } from '../utils/typeGuard';
+import { hasKeyAttribute, isTextVDOM } from '../utils/typeGuard';
 import {
   getNewVDOM,
   getRoot,
@@ -48,15 +48,25 @@ function isChanged(
   const isTextprevVDOM = isTextVDOM(prevVDOM);
   const isTextnextVDOM = isTextVDOM(nextVDOM);
 
-  return (
-    isTextprevVDOM !== isTextnextVDOM ||
-    (isTextprevVDOM &&
-      isTextnextVDOM &&
-      !Object.is(prevVDOM.value, nextVDOM.value)) ||
-    (!isTextprevVDOM &&
-      !isTextnextVDOM &&
-      !Object.is(prevVDOM?.el, nextVDOM?.el))
-  );
+  if (isTextprevVDOM || isTextnextVDOM) {
+    // 둘 중 하나가 텍스트 노드이거나 둘 다 텍스트 노드일 경우의 비교
+    return (
+      isTextprevVDOM !== isTextnextVDOM ||
+      (isTextprevVDOM &&
+        isTextnextVDOM &&
+        !Object.is(prevVDOM?.value, nextVDOM?.value))
+    );
+  }
+
+  // `key` 비교
+  if (hasKeyAttribute(prevVDOM!.props) && hasKeyAttribute(nextVDOM!.props)) {
+    if (prevVDOM!.props.key !== nextVDOM!.props.key) {
+      return true;
+    }
+  }
+
+  // 기본 엘리먼트 비교
+  return !Object.is(prevVDOM?.el, nextVDOM?.el);
 }
 
 /**
@@ -76,29 +86,22 @@ function updateElement(
 ): void {
   const $current = prevVDOM?.current;
 
-  // 초기 가상 DOM이 없거나 텍스트 노드 값이 없으면 새로운 DOM을 생성하여 추가
   if (!prevVDOM || (isTextVDOM(prevVDOM) && !prevVDOM.value)) {
     const $next = createDOM(nextVDOM);
     if ($next) {
       $parent.appendChild($next);
     }
-  }
-  // 새로운 가상 DOM이 없거나 텍스트 노드 값이 없으면 기존 DOM을 제거
-  else if (!nextVDOM || (isTextVDOM(nextVDOM) && !nextVDOM.value)) {
+  } else if (!nextVDOM || (isTextVDOM(nextVDOM) && !nextVDOM.value)) {
     if ($current) {
       $parent.removeChild($current);
     }
-  }
-  // 가상 DOM이 변경되었다면 기존 DOM을 교체
-  else if (isChanged(prevVDOM, nextVDOM)) {
+  } else if (isChanged(prevVDOM, nextVDOM)) {
     const $next = createDOM(nextVDOM);
     if ($current && $next) {
       $current.replaceWith($next);
       nextVDOM.current = $next;
     }
-  }
-  // 가상 DOM이 모두 엘리먼트인 경우 자식 요소들에 대해 재귀적으로 처리
-  else if (!isTextVDOM(prevVDOM) && !isTextVDOM(nextVDOM)) {
+  } else if (!isTextVDOM(prevVDOM) && !isTextVDOM(nextVDOM)) {
     const length = Math.max(
       prevVDOM.children?.length || 0,
       nextVDOM.children?.length || 0
@@ -114,7 +117,7 @@ function updateElement(
     nextVDOM.current = $current;
   }
 
-  // 새로운 가상 DOM이 엘리먼트인 경우 속성을 설정
+  // `props` 속성 설정 및 업데이트
   if (!isTextVDOM(nextVDOM) && nextVDOM) {
     setAttributes(nextVDOM.props, $current);
   }

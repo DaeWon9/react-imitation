@@ -1,8 +1,8 @@
-import { DOMAttribute, InputDOMAttribute } from './attributes';
+import { ReactImitationProps } from './attributes';
 
 export interface VDOM {
   el: keyof HTMLElementTagNameMap;
-  props: DOMAttribute | InputDOMAttribute | null;
+  props: ReactImitationProps | null;
   children?: VDOMChildren;
   current?: HTMLElement | Text;
 }

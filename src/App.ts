@@ -30,6 +30,7 @@ const TestComponent = (props: any) => {
       createElement({
         el: 'button',
         props: {
+          key: 1,
           className: 'test',
           onclick: () => {
             props.setCount(props.count + 1);
