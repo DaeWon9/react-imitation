@@ -1,5 +1,5 @@
-import { TextVDOM, VDOM } from '../types/vdom';
-import { isTextVDOM } from '../utils/typeGuard';
+import { TextVDOM, VDOM } from '../types';
+import { isTextVDOM } from '../utils';
 import { setAttributes } from './setAttributes';
 
 /**
@@ -15,41 +15,42 @@ import { setAttributes } from './setAttributes';
 export function createDOM(
   vDOM?: VDOM | TextVDOM
 ): Text | HTMLElement | undefined {
-  // TextVDOM인 경우 텍스트 노드를 생성하여 반환합니다.
+  // VDOM이 TextVDOM인지 확인
   if (isTextVDOM(vDOM)) {
-    const $textNode = document.createTextNode(vDOM.value);
+    const $textNode = document.createTextNode(vDOM.value); // 텍스트 노드 생성
     const { current } = vDOM;
 
-    // 이전에 생성된 텍스트 노드가 동일한 경우 재사용합니다.
+    // 현재 텍스트 노드가 기존 텍스트와 동일한지 확인
     if (
       typeof current?.data === 'string' &&
       Object.is(current?.data, $textNode.data)
     ) {
-      return current;
+      return current; // 동일하면 기존 노드를 반환
     } else {
-      vDOM.current = $textNode;
+      vDOM.current = $textNode; // 새 텍스트 노드를 저장
       return $textNode;
     }
   } else if (vDOM) {
-    // 일반 VDOM인 경우 엘리먼트를 생성합니다.
+    // VDOM이 일반 VDOM인 경우 처리
     const { el, props, children } = vDOM;
-    const $el = document.createElement(el);
-    vDOM.current = $el;
 
-    // 엘리먼트의 속성을 설정합니다.
+    // 지정된 태그 이름으로 엘리먼트를 생성
+    const $el = document.createElement(el);
+    vDOM.current = $el; // 생성된 엘리먼트를 현재 참조로 저장
+
+    // 생성된 엘리먼트에 속성을 설정
     setAttributes(props, $el);
 
-    // 자식 요소들을 재귀적으로 생성하여 추가합니다.
+    // 자식 요소들을 순회하며 재귀적으로 DOM 생성 후 추가
     children?.map(createDOM).forEach(($childEl) => {
       if ($childEl) {
-        $el.appendChild($childEl);
+        $el.appendChild($childEl); // 생성된 자식 노드를 부모에 추가
       }
     });
-    return $el;
+
+    return $el; // 최종 생성된 엘리먼트를 반환
   }
 
-  // vDOM이 제공되지 않으면 undefined를 반환합니다.
+  // vDOM이 제공되지 않은 경우 undefined 반환
   return undefined;
 }
-
-export default createDOM;
