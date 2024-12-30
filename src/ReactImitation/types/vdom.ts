@@ -14,4 +14,4 @@ export interface TextVDOM {
 
 export type VDOMChildren = (TextVDOM | VDOM | undefined)[];
 
-export type Children = (string | VDOM | undefined)[];
+export type Children = (string | VDOM | Function | undefined)[];
