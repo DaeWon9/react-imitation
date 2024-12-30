@@ -1,0 +1,28 @@
+.functional-component-container {
+  border: 1px solid black;
+  padding: 10px;
+  margin-bottom: 2px;
+}
+
+.button3 {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: blue;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.button4 {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: green;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.key-element {
+  color: red;
+  font-weight: bold;
+}
