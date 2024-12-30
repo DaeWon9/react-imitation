@@ -63,8 +63,6 @@ export function useState<T>(
   // 상태 인덱스를 증가시켜 다음 상태를 가리키도록 설정
   increaseStateIndex();
 
-  console.log(stateStore);
-
   // 상태와 상태 업데이트 함수를 반환
   return [state, setState];
 }
