@@ -2,6 +2,7 @@ export interface DOMAttribute {
   onclick?: ((this: Notification, ev: Event) => any) | null;
   className?: string | string[];
   id?: string;
+  key?: string;
 }
 
 export interface InputDOMAttribute extends DOMAttribute {
@@ -14,10 +15,6 @@ export interface AnchorDOMAttribute extends DOMAttribute {
   href: string;
 }
 
-export interface KeyAttribute extends DOMAttribute {
-  key?: string | number;
-}
-
 export interface UnknownAttribute {
   [prop: string]: unknown;
 }
@@ -26,6 +23,5 @@ export type ReactImitationProps =
   | DOMAttribute
   | InputDOMAttribute
   | AnchorDOMAttribute
-  | KeyAttribute
   | UnknownAttribute
   | null;
