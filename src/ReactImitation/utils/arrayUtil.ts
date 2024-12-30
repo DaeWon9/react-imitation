@@ -9,3 +9,20 @@ export function flattenArray<T>(arr: Array<T | T[]>): T[] {
     []
   );
 }
+
+export function makeClassName(
+  classList: string | (string | undefined)[]
+): string {
+  if (Array.isArray(classList)) {
+    return classList
+      .map((className) => {
+        if (className === undefined) {
+          throw new Error('해당 클래스는 존재하지 않습니다.');
+        }
+        return className;
+      })
+      .join(' ');
+  } else {
+    return classList;
+  }
+}

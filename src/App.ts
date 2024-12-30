@@ -1,71 +1,153 @@
-import { useState } from './ReactImitation/hooks';
-import { createElement } from './ReactImitation/vdom';
-
-const TestComponent = (props: any) => {
-  const [testState, setTestState] = useState(1);
-
-  return createElement({
-    el: 'div',
-    props: { className: 'test-component' },
-    children: [
-      `innerState: ${testState}`,
-      createElement({
-        el: 'br',
-      }),
-      `outterState: ${props.count}`,
-      createElement({
-        el: 'br',
-      }),
-      createElement({
-        el: 'button',
-        props: {
-          className: 'test',
-          onclick: () => {
-            setTestState(testState + 1);
-            console.log('clicked');
-          },
-        },
-        children: ['inner State'],
-      }),
-      createElement({
-        el: 'button',
-        props: {
-          key: 1,
-          className: 'test',
-          onclick: () => {
-            props.setCount(props.count + 1);
-            console.log('clicked');
-          },
-        },
-        children: ['outter State'],
-      }),
-    ],
-  });
-};
+import { useState, createElement } from './ReactImitation';
+import { FunctionalComponent } from './component/FunctionalComponent';
 
 export const App = () => {
-  const [count, setCount] = useState(1);
+  const [count1, setCount1] = useState(1);
+  const [count2, setCount2] = useState(2);
 
   return createElement({
     el: 'div',
     children: [
       'hi',
-      createElement({ el: 'li', children: [`${count}`] }),
-      createElement({ el: 'li', children: [`${count}`] }),
+      createElement({ el: 'li', children: [`${count1}`] }),
+      createElement({ el: 'li', children: [`${count2}`] }),
       createElement({
         el: 'button',
         props: {
-          className: 'test',
+          className: 'button1',
           onclick: () => {
-            setCount(count + 1);
-            console.log('clicked');
+            setCount1(count1 + 1);
           },
         },
         children: ['Click me'],
       }),
-      TestComponent({
-        count: count,
-        setCount: setCount,
+      createElement({
+        el: 'button',
+        props: {
+          className: 'button2',
+          onclick: () => {
+            setCount2(count2 + 1);
+          },
+        },
+        children: ['Click me'],
+      }),
+
+      createElement({
+        el: FunctionalComponent,
+        props: {
+          count: count1,
+          setCount: setCount1,
+        },
+      }),
+
+      createElement({
+        el: FunctionalComponent,
+        props: {
+          count: count2,
+          setCount: setCount2,
+        },
+      }),
+
+      createElement({
+        el: 'div',
+        props: {},
+        children: [
+          createElement({
+            el: 'div',
+            children: [
+              'hi',
+              createElement({ el: 'li', children: [`${count1}`] }),
+              createElement({ el: 'li', children: [`${count2}`] }),
+              createElement({
+                el: 'button',
+                props: {
+                  className: 'button1',
+                  onclick: () => {
+                    setCount1(count1 + 1);
+                  },
+                },
+                children: ['Click me'],
+              }),
+              createElement({
+                el: 'button',
+                props: {
+                  className: 'button2',
+                  onclick: () => {
+                    setCount2(count2 + 1);
+                  },
+                },
+                children: ['Click me'],
+              }),
+
+              createElement({
+                el: FunctionalComponent,
+                props: {
+                  count: count1,
+                  setCount: setCount1,
+                },
+              }),
+
+              createElement({
+                el: FunctionalComponent,
+                props: {
+                  count: count2,
+                  setCount: setCount2,
+                },
+              }),
+
+              createElement({
+                el: 'div',
+                props: {},
+                children: [
+                  createElement({
+                    el: 'div',
+                    children: [
+                      'hi',
+                      createElement({ el: 'li', children: [`${count1}`] }),
+                      createElement({ el: 'li', children: [`${count2}`] }),
+                      createElement({
+                        el: 'button',
+                        props: {
+                          className: 'button1',
+                          onclick: () => {
+                            setCount1(count1 + 1);
+                          },
+                        },
+                        children: ['Click me'],
+                      }),
+                      createElement({
+                        el: 'button',
+                        props: {
+                          className: 'button2',
+                          onclick: () => {
+                            setCount2(count2 + 1);
+                          },
+                        },
+                        children: ['Click me'],
+                      }),
+
+                      createElement({
+                        el: FunctionalComponent,
+                        props: {
+                          count: count1,
+                          setCount: setCount1,
+                        },
+                      }),
+
+                      createElement({
+                        el: FunctionalComponent,
+                        props: {
+                          count: count2,
+                          setCount: setCount2,
+                        },
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
       }),
     ],
   });

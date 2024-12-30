@@ -1,4 +1,5 @@
-import { DOMAttribute, ReactImitationProps } from '../types/attributes';
+import { DOMAttribute, ReactImitationProps } from '../types';
+import { makeClassName } from '../utils';
 
 /**
  * setAttributes 함수는 주어진 속성(props)을 기반으로 DOM 요소($el)의 속성을 설정합니다.
@@ -14,40 +15,33 @@ export function setAttributes(
   props: ReactImitationProps,
   $el: HTMLElement | Text | undefined
 ): void {
-  // $el이 HTMLElement가 아닌 경우 처리하지 않습니다.
+  // $el이 HTMLElement가 아닌 경우 속성 설정 중단
   if (!($el instanceof HTMLElement)) {
     return;
   }
 
+  // props가 존재하는 경우 속성 설정
   if (props) {
     for (const [propName, propValue] of Object.entries(props)) {
       const tmpPropName = propName as keyof DOMAttribute;
 
+      // 'key' 속성은 무시
+      if (tmpPropName === 'key') {
+        continue;
+      }
+
+      // className 속성 처리
       if (tmpPropName === 'className') {
         const newClassName = makeClassName(propValue);
         if ($el[tmpPropName] !== newClassName) {
-          $el[tmpPropName] = newClassName;
+          $el[tmpPropName] = newClassName; // 클래스명이 변경된 경우 업데이트
         }
       } else {
+        // 다른 속성 처리
         if ($el[tmpPropName] !== propValue) {
-          $el[tmpPropName] = propValue;
+          $el[tmpPropName] = propValue; // 속성 값이 변경된 경우 업데이트
         }
       }
     }
-  }
-}
-
-function makeClassName(classList: string | (string | undefined)[]): string {
-  if (Array.isArray(classList)) {
-    return classList
-      .map((className) => {
-        if (className === undefined) {
-          throw new Error('해당 클래스는 존재하지 않습니다.');
-        }
-        return className;
-      })
-      .join(' ');
-  } else {
-    return classList;
   }
 }

@@ -1,11 +1,11 @@
-import { TextVDOM, VDOM } from '../types/vdom';
-import { hasKeyAttribute, isTextVDOM } from '../utils/typeGuard';
+import { TextVDOM, VDOM } from '../types';
+import { isTextVDOM } from '../utils';
 import {
   getNewVDOM,
   getRoot,
   getVDOM,
+  resetAllKeysIndex,
   resetStateIndex,
-  setCurrentComponent,
   setVDOM,
 } from '../vdom/store';
 import { createDOM } from './createDom';
@@ -22,14 +22,14 @@ import { setAttributes } from './setAttributes';
  * @param prevVDOM - 이전의 가상 DOM입니다.
  */
 export function updateDOM(
-  $parent: HTMLElement = getRoot(),
-  nextVDOM: VDOM = getNewVDOM(),
-  prevVDOM: VDOM = getVDOM()
+  $parent: HTMLElement = getRoot(), // 부모 DOM 요소 기본값은 루트 요소
+  nextVDOM: VDOM = getNewVDOM(), // 새로운 가상 DOM, 기본값으로 초기화된 가상 DOM 사용
+  prevVDOM: VDOM = getVDOM() // 이전 가상 DOM, 기본값으로 현재 가상 DOM 사용
 ): void {
-  resetStateIndex();
-  setCurrentComponent($parent);
-  updateElement($parent, nextVDOM, prevVDOM);
-  setVDOM(nextVDOM);
+  resetAllKeysIndex(); // 모든 키 인덱스를 초기화
+  resetStateIndex(); // 상태 인덱스를 초기화
+  updateElement($parent, nextVDOM, prevVDOM); // 개별 요소 업데이트
+  setVDOM(nextVDOM); // 최신 가상 DOM 설정
 }
 
 /**
@@ -45,28 +45,28 @@ function isChanged(
   prevVDOM: VDOM | TextVDOM | undefined,
   nextVDOM: VDOM | TextVDOM | undefined
 ): boolean {
-  const isTextprevVDOM = isTextVDOM(prevVDOM);
-  const isTextnextVDOM = isTextVDOM(nextVDOM);
+  const isTextprevVDOM = isTextVDOM(prevVDOM); // 이전 가상 DOM이 텍스트 노드인지 확인
+  const isTextnextVDOM = isTextVDOM(nextVDOM); // 다음 가상 DOM이 텍스트 노드인지 확인
 
   if (isTextprevVDOM || isTextnextVDOM) {
-    // 둘 중 하나가 텍스트 노드이거나 둘 다 텍스트 노드일 경우의 비교
+    // 둘 중 하나가 텍스트 노드이거나 둘 다 텍스트 노드일 경우 비교
     return (
-      isTextprevVDOM !== isTextnextVDOM ||
-      (isTextprevVDOM &&
+      isTextprevVDOM !== isTextnextVDOM || // 텍스트 여부가 다를 경우
+      (isTextprevVDOM && // 텍스트 노드일 때만 value 비교
         isTextnextVDOM &&
         !Object.is(prevVDOM?.value, nextVDOM?.value))
     );
   }
 
   // `key` 비교
-  if (hasKeyAttribute(prevVDOM!.props) && hasKeyAttribute(nextVDOM!.props)) {
-    if (prevVDOM!.props.key !== nextVDOM!.props.key) {
-      return true;
+  if (prevVDOM && nextVDOM) {
+    if (prevVDOM.props?.key !== nextVDOM!.props?.key) {
+      return true; // `key`가 다르면 변경된 것으로 간주
     }
   }
 
   // 기본 엘리먼트 비교
-  return !Object.is(prevVDOM?.el, nextVDOM?.el);
+  return !Object.is(prevVDOM?.el, nextVDOM?.el); // 엘리먼트 타입이 다르면 변경된 것으로 간주
 }
 
 /**
@@ -80,45 +80,48 @@ function isChanged(
  * @param prevVDOM - 이전의 가상 DOM 객체입니다.
  */
 function updateElement(
-  $parent: HTMLElement | Text,
-  nextVDOM: TextVDOM | VDOM | undefined,
-  prevVDOM?: TextVDOM | VDOM | undefined
+  $parent: HTMLElement | Text, // 부모 DOM 요소 타입은 HTMLElement 또는 Text 노드
+  nextVDOM: TextVDOM | VDOM | undefined, // 다음 가상 DOM
+  prevVDOM?: TextVDOM | VDOM | undefined // 이전 가상 DOM, 선택적
 ): void {
-  const $current = prevVDOM?.current;
+  const $current = prevVDOM?.current; // 이전 VDOM의 현재 DOM 노드 가져오기
 
   if (!prevVDOM || (isTextVDOM(prevVDOM) && !prevVDOM.value)) {
+    // 이전 VDOM이 없거나 텍스트 노드일 경우, 다음 VDOM을 DOM으로 생성하여 추가
     const $next = createDOM(nextVDOM);
     if ($next) {
-      $parent.appendChild($next);
+      $parent.appendChild($next); // 부모 요소에 새 DOM 추가
     }
   } else if (!nextVDOM || (isTextVDOM(nextVDOM) && !nextVDOM.value)) {
+    // 다음 VDOM이 없거나 텍스트 노드일 경우, 현재 DOM 제거
     if ($current) {
-      $parent.removeChild($current);
+      $parent.removeChild($current); // 부모 요소에서 현재 DOM 제거
     }
   } else if (isChanged(prevVDOM, nextVDOM)) {
+    // 이전 VDOM과 비교하여 변경된 경우, 새 DOM으로 교체
     const $next = createDOM(nextVDOM);
     if ($current && $next) {
-      $current.replaceWith($next);
-      nextVDOM.current = $next;
+      $current.replaceWith($next); // 기존 DOM 교체
+      nextVDOM.current = $next; // 업데이트된 DOM을 저장
     }
   } else if (!isTextVDOM(prevVDOM) && !isTextVDOM(nextVDOM)) {
+    // 텍스트 노드가 아닌 경우, 자식 요소들을 재귀적으로 업데이트
     const length = Math.max(
-      prevVDOM.children?.length || 0,
-      nextVDOM.children?.length || 0
+      prevVDOM.children?.length || 0, // 이전 VDOM의 자식 수
+      nextVDOM.children?.length || 0 // 다음 VDOM의 자식 수
     );
-    nextVDOM.current = $current;
+    nextVDOM.current = $current; // 현재 DOM을 다음 VDOM에 연결
 
     for (let i = 0; i < length; i++) {
       if ($current) {
-        updateElement($current, nextVDOM.children?.[i], prevVDOM.children?.[i]);
+        updateElement($current, nextVDOM.children?.[i], prevVDOM.children?.[i]); // 자식 요소 재귀 업데이트
       }
     }
   } else {
-    nextVDOM.current = $current;
+    nextVDOM.current = $current; // 텍스트 노드일 경우 그대로 유지
   }
 
-  // `props` 속성 설정 및 업데이트
   if (!isTextVDOM(nextVDOM) && nextVDOM) {
-    setAttributes(nextVDOM.props, $current);
+    setAttributes(nextVDOM.props, $current); // 속성 설정
   }
 }

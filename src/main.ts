@@ -1,5 +1,6 @@
+import { render } from './ReactImitation';
 import { App } from './App';
-import { render } from './ReactImitation/vdom';
+import './index.css';
 
 const root = document.getElementById('app');
-render(() => App(), root);
+render(App, root);
