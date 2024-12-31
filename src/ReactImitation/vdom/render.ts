@@ -4,7 +4,7 @@ import {
   setRoot,
   setCreateVDOM,
   generateKey,
-  resetAllKeysIndex,
+  resetAllComponentKeysIndex,
   pushParentKey,
 } from './store';
 
@@ -41,8 +41,8 @@ export function render(
   // 가상 DOM 생성 함수를 저장
   setCreateVDOM(createVDOM);
 
-  // 상태 인덱스를 초기화하여 상태 관리 시작점 설정
-  resetAllKeysIndex();
+  // 모든 컴포넌트의 키 인덱스를 초기화하여 상태 관리 시작점 설정
+  resetAllComponentKeysIndex();
 
   // 가상 DOM과 실제 DOM을 동기화
   updateDOM();

@@ -31,7 +31,7 @@ export function getEffectIndex(): number {
   return effectIndexMap.get(currentKey) || 0;
 }
 
-export function resetAllKeysIndex() {
+export function resetAllComponentKeysIndex() {
   componentKeys.forEach((key) => {
     if (componentIndexStore.has(key)) {
       componentIndexStore.set(key, 0);
