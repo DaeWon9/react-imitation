@@ -2,6 +2,8 @@ import { VDOM } from '../types';
 
 export const stateStore = new Map<string, unknown[]>(); // 각 컴포넌트 키별 상태 저장
 export const stateIndexMap = new Map<string, number>(); // 상태 인덱스 추적
+export const effectStore = new Map<string, unknown[]>(); // 의존성 배열 추적
+export const effectIndexMap = new Map<string, number>(); // effect 인덱스 추적
 const componentKeyStore = new WeakMap<Function, string>(); // 각 컴포넌트별 고유 키 저장
 const componentIndexStore = new WeakMap<Function, number>(); // 동일 컴포넌트 비교를 위한 인덱스 저장
 const componentKeys = new Set<Function>(); // WeakMap의 Key추적을 위한 셋
@@ -11,7 +13,25 @@ let $root: HTMLElement;
 let VDOM: VDOM;
 let createVDOM: () => VDOM;
 
-export function resetAllKeysIndex() {
+// effect 인덱스 증가 로직
+export function increaseEffectIndex(): number {
+  const currentKey = getCurrentKey();
+  let currentIndex = effectIndexMap.get(currentKey);
+
+  if (currentIndex === undefined) {
+    currentIndex = 0;
+  }
+
+  effectIndexMap.set(currentKey, currentIndex + 1);
+  return currentIndex;
+}
+
+export function getEffectIndex(): number {
+  const currentKey = getCurrentKey();
+  return effectIndexMap.get(currentKey) || 0;
+}
+
+export function resetAllComponentKeysIndex() {
   componentKeys.forEach((key) => {
     if (componentIndexStore.has(key)) {
       componentIndexStore.set(key, 0);
@@ -65,9 +85,10 @@ export function getCurrentKey(): string {
     : parentKeyStack[parentKeyStack.length - 1];
 }
 
-export function resetStateIndex(): void {
+export function resetIndexMap(): void {
   const currentKey = getCurrentKey();
   stateIndexMap.set(currentKey, 0);
+  effectIndexMap.set(currentKey, 0);
 }
 
 export function increaseStateIndex(): void {
