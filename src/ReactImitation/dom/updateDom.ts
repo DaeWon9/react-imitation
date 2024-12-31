@@ -5,7 +5,7 @@ import {
   getRoot,
   getVDOM,
   resetAllKeysIndex,
-  resetStateIndex,
+  resetIndexMap,
   setVDOM,
 } from '../vdom/store';
 import { createDOM } from './createDom';
@@ -27,7 +27,7 @@ export function updateDOM(
   prevVDOM: VDOM = getVDOM() // 이전 가상 DOM, 기본값으로 현재 가상 DOM 사용
 ): void {
   resetAllKeysIndex(); // 모든 키 인덱스를 초기화
-  resetStateIndex(); // 상태 인덱스를 초기화
+  resetIndexMap(); // 상태 인덱스를 초기화
   updateElement($parent, nextVDOM, prevVDOM); // 개별 요소 업데이트
   setVDOM(nextVDOM); // 최신 가상 DOM 설정
 }

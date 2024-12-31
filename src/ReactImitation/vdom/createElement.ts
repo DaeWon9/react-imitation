@@ -5,7 +5,7 @@ import {
   getParentKey,
   popParentKey,
   pushParentKey,
-  stateIndexMap,
+  resetIndexMap,
 } from './store';
 
 interface CreateElementProps {
@@ -67,8 +67,8 @@ export function createElement({
   // 요소가 함수형 컴포넌트인 경우
   if (typeof el === 'function') {
     const key = generateKey(el); // 컴포넌트의 고유 키 생성
-    stateIndexMap.set(key, 0); // 상태 인덱스 초기화
     pushParentKey(key); // 현재 컴포넌트를 부모로 설정
+    resetIndexMap();
     const functionalCompoent = el(props) as VDOM; // 함수형 컴포넌트를 실행하여 VDOM 생성
     popParentKey(); // 부모 키를 원래 상태로 복원
     return functionalCompoent; // 생성된 VDOM 반환
