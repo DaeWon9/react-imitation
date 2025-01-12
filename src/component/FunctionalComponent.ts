@@ -1,5 +1,4 @@
-import { useState, createElement } from '../ReactImitation';
-import { useEffect } from '../ReactImitation/hooks/useEffect';
+import { useState, useEffect, createElement } from '../ReactImitation';
 import { getCurrentKey } from '../ReactImitation/vdom/store';
 import styles from './FunctionalComponent.module.css';
 

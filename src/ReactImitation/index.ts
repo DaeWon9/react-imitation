@@ -1,2 +1,2 @@
 export { render, createElement } from './vdom';
-export { useState } from './hooks';
+export { useState, useEffect } from './hooks';

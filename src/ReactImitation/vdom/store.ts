@@ -13,7 +13,11 @@ let $root: HTMLElement;
 let VDOM: VDOM;
 let createVDOM: () => VDOM;
 
-// effect 인덱스 증가 로직
+export function resetStore(): void {
+  stateStore.clear();
+  effectStore.clear();
+}
+
 export function increaseEffectIndex(): number {
   const currentKey = getCurrentKey();
   let currentIndex = effectIndexMap.get(currentKey);
