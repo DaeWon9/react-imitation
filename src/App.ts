@@ -1,6 +1,6 @@
 import { Home } from './pages/Home';
 import { TestPage } from './pages/TestPage';
-import { createRouter } from './ReactImitation/router/router';
+import { createRouter } from './ReactImitation/router';
 
 export const App = () => {
   return createRouter({

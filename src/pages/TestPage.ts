@@ -1,5 +1,5 @@
 import { useState, useEffect, createElement } from '../ReactImitation';
-import { navigate } from '../ReactImitation/router/router';
+import { navigate } from '../ReactImitation/router';
 
 export const TestPage = () => {
   const [count1, setCount1] = useState(1);

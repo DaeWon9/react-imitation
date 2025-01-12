@@ -1,5 +1,5 @@
 import { useState, createElement } from '../ReactImitation';
-import { navigate } from '../ReactImitation/router/router';
+import { navigate } from '../ReactImitation/router';
 import { FunctionalComponent } from '../component/FunctionalComponent';
 
 export const Home = () => {
