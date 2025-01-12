@@ -1,24 +1,12 @@
-import { createElement } from './lib';
+import { Home } from './pages/Home';
+import { TestPage } from './pages/TestPage';
+import { createRouter } from './ReactImitation/router';
 
-export const App = (): HTMLElement => {
-  return createElement({
-    tag: 'section',
-    className: 'section-class',
-    props: { style: { backgroundColor: '#f4f4f4', padding: '20px' } },
-    children: [
-      createElement({
-        tag: 'header',
-        children: [createElement({ tag: 'h1', children: ['Element Test'] })],
-      }),
-      createElement({
-        tag: 'button',
-        props: {
-          onClick: (event) => {
-            console.log('Button clicked', event);
-          },
-        },
-        children: ['Click me'],
-      }),
+export const App = () => {
+  return createRouter({
+    routes: [
+      { path: '/', element: Home },
+      { path: '/test', element: TestPage },
     ],
   });
 };

@@ -1,6 +1,6 @@
+import { render } from './ReactImitation';
 import { App } from './App';
+import './index.css';
 
 const root = document.getElementById('app');
-if (root) {
-  root.appendChild(App());
-}
+render(App, root);
