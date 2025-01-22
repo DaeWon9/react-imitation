@@ -1,4 +1,4 @@
-import { VDOM } from '../types';
+import type { VDOM } from '../types';
 
 export const stateStore = new Map<string, unknown[]>(); // 각 컴포넌트 키별 상태 저장
 export const stateIndexMap = new Map<string, number>(); // 상태 인덱스 추적
