@@ -23,7 +23,8 @@ export function setAttributes(
   // props가 존재하는 경우 속성 설정
   if (props) {
     for (const [propName, propValue] of Object.entries(props)) {
-      const tmpPropName = propName as keyof DOMAttribute;
+      const normalizedPropName = propName.toLowerCase(); // 속성 이름을 소문자로 변환
+      const tmpPropName = normalizedPropName as keyof DOMAttribute;
 
       // 'key' 속성은 무시
       if (tmpPropName === 'key') {
@@ -31,10 +32,10 @@ export function setAttributes(
       }
 
       // className 속성 처리
-      if (tmpPropName === 'className') {
+      if (propName === 'className') {
         const newClassName = makeClassName(propValue);
-        if ($el[tmpPropName] !== newClassName) {
-          $el[tmpPropName] = newClassName; // 클래스명이 변경된 경우 업데이트
+        if ($el.className !== newClassName) {
+          $el.className = newClassName; // 클래스명이 변경된 경우 업데이트
         }
       } else {
         // 다른 속성 처리

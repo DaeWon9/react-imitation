@@ -1,16 +1,18 @@
 import { ReactImitationProps } from './attributes';
 
 export interface VDOM {
-  el: keyof HTMLElementTagNameMap;
+  tag: keyof HTMLElementTagNameMap;
   props: ReactImitationProps | null;
   children?: VDOMChildren;
   current?: HTMLElement | Text;
 }
 
 export interface TextVDOM {
-  value: string;
+  value: string | boolean | number;
   current?: Text;
 }
+
+export type TextVDOMNode = string | number | boolean;
 
 export type VDOMChildren = (TextVDOM | VDOM | undefined)[];
 

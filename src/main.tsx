@@ -1,4 +1,4 @@
-import { render } from './ReactImitation';
+import { render } from '@ReactImitation';
 import { App } from './App';
 import './index.css';
 

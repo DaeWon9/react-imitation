@@ -1,5 +1,5 @@
 import { updateDOM } from '../dom';
-import { VDOM } from '../types';
+import { TextVDOM, VDOM } from '../types';
 import { createElement } from '../vdom';
 import {
   generateKey,
@@ -40,10 +40,9 @@ function generateComponentByRoute(path: string): VDOM {
 
   if (!componentFactory) {
     console.warn(`No component found for path: ${path}`);
-    return createElement({
-      el: 'div',
-      children: ['404 - Page not found'], // 경로가 없을 때 반환할 기본 페이지
-    });
+    return createElement('div', null, {
+      value: '404 - Page not found',
+    } as TextVDOM);
   }
 
   const key = generateKey(componentFactory); // 컴포넌트의 고유 키 생성
