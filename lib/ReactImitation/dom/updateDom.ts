@@ -6,6 +6,7 @@ import {
   getVDOM,
   resetAllComponentKeysIndex,
   resetIndexMap,
+  resetNstChildIndexMap,
   setVDOM,
 } from '../vdom/store';
 import { createDOM } from './createDom';
@@ -28,6 +29,7 @@ export function updateDOM(
 ): void {
   resetAllComponentKeysIndex(); // 모든 컴포넌트 키 인덱스를 초기화
   resetIndexMap(); // 상태 인덱스를 초기화
+  resetNstChildIndexMap(); // 자식 인덱스 초기화
   updateElement($parent, nextVDOM, prevVDOM); // 개별 요소 업데이트
   setVDOM(nextVDOM); // 최신 가상 DOM 설정
 }
