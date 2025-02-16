@@ -9,9 +9,20 @@ const componentIndexStore = new WeakMap<Function, number>(); // 동일 컴포넌
 const componentKeys = new Set<Function>(); // WeakMap의 Key추적을 위한 셋
 const parentKeyStack: string[] = []; // 부모 컴포넌트 추적을 위한 스택
 const usedKeys = new Set(); // 고유 키 생성을 위한 사용된 키셋
+const nstChildIndexMap = new Map<string, number>(); // 부모의 몇번 째 자식인지 저장
 let $root: HTMLElement;
 let VDOM: VDOM;
 let createVDOM: () => VDOM;
+
+export function resetNstChildIndexMap() {
+  nstChildIndexMap.clear();
+}
+
+export function incrementNstChildIndexMap(parentKey: string): number {
+  const currentIndex = nstChildIndexMap.get(parentKey) || 0;
+  nstChildIndexMap.set(parentKey, currentIndex + 1);
+  return currentIndex;
+}
 
 export function resetStore(): void {
   stateStore.clear();
