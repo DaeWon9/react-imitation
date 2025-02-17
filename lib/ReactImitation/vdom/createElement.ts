@@ -1,9 +1,12 @@
 import { ReactImitationProps, VDOM, VDOMChildren } from '../types';
+import { isVDOM } from '../utils';
 import {
   generateKey,
   popParentKey,
   pushParentKey,
   resetIndexMap,
+  getParentKey,
+  incrementNstChildIndexMap,
 } from './store';
 
 /**
@@ -19,23 +22,41 @@ export function createElement(
   props: ReactImitationProps | null = null,
   ...children: VDOMChildren
 ): VDOM {
-  // 요소가 함수형 컴포넌트인 경우
   if (typeof tag === 'function') {
-    const key = generateKey(tag); // 컴포넌트의 고유 키 생성
-    pushParentKey(key); // 현재 컴포넌트를 부모로 설정
+    const key = generateKey(tag);
+    pushParentKey(key);
     resetIndexMap();
-    const functionalCompoent = tag({ ...props, children }) as VDOM; // 함수형 컴포넌트를 실행하여 VDOM 생성
-    popParentKey(); // 부모 키를 원래 상태로 복원
 
-    return functionalCompoent; // 생성된 VDOM 반환
+    const functionalComponent = tag({ ...props, children }) as VDOM;
+
+    popParentKey();
+    return functionalComponent;
   }
 
   if (!tag) tag = 'div';
 
+  const parentKey = getParentKey(); // 부모 키 가져오기
+  const currentIndex = incrementNstChildIndexMap(parentKey); // 현재 부모 아래 몇 번째 자식인지 계산
+
   return {
-    tag, // 태그 이름
-    props, // 요소 속성
-    children: children, // 처리된 자식 요소들
-    current: undefined, // 현재 실제 DOM 요소 (초기값 undefined)
+    tag,
+    props: {
+      ...props,
+      key: props?.key ?? `${parentKey}-${currentIndex}`, // 자식의 고유 key 적용
+    },
+    children: children.map((child) => {
+      if (isVDOM(child)) {
+        const childIndex = incrementNstChildIndexMap(parentKey); // 자식 요소의 고유 인덱스 계산
+        return {
+          ...child,
+          props: {
+            ...child.props,
+            key: child.props?.key ?? `${parentKey}-${childIndex}`,
+          },
+        };
+      }
+      return child;
+    }),
+    current: undefined,
   };
 }
