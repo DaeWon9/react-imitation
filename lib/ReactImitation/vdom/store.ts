@@ -4,6 +4,8 @@ export const stateStore = new Map<string, unknown[]>(); // 각 컴포넌트 키�
 export const stateIndexMap = new Map<string, number>(); // 상태 인덱스 추적
 export const effectStore = new Map<string, unknown[]>(); // 의존성 배열 추적
 export const effectIndexMap = new Map<string, number>(); // effect 인덱스 추적
+export const refStore = new Map<string, unknown[]>(); // ref 추적
+export const refIndexMap = new Map<string, number>(); // ref 인덱스 추적
 const componentKeyStore = new WeakMap<Function, string>(); // 각 컴포넌트별 고유 키 저장
 const componentIndexStore = new WeakMap<Function, number>(); // 동일 컴포넌트 비교를 위한 인덱스 저장
 const componentKeys = new Set<Function>(); // WeakMap의 Key추적을 위한 셋
@@ -27,6 +29,7 @@ export function incrementNstChildIndexMap(parentKey: string): number {
 export function resetStore(): void {
   stateStore.clear();
   effectStore.clear();
+  refStore.clear();
 }
 
 export function increaseEffectIndex(): number {
@@ -104,6 +107,7 @@ export function resetIndexMap(): void {
   const currentKey = getCurrentKey();
   stateIndexMap.set(currentKey, 0);
   effectIndexMap.set(currentKey, 0);
+  refIndexMap.set(currentKey, 0);
 }
 
 export function increaseStateIndex(): void {
