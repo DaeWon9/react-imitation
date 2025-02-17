@@ -1,8 +1,9 @@
-export interface DOMAttribute {
+export interface DOMAttribute<T = unknown> {
   onclick?: ((this: Notification, ev: Event) => any) | null;
   className?: string | string[];
   id?: string;
   key?: string;
+  ref?: { current: T };
 }
 
 export interface InputDOMAttribute extends DOMAttribute {
