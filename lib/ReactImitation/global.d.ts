@@ -26,6 +26,8 @@ declare namespace ReactImitation {
 
   function useEffect(callback: () => void, dependencies: unknown[]): void;
 
+  function useRef<T>(initialValue: T | null): { current: T };
+
   // 렌더링 관련
   function render(
     createVDOM: () => VDOM,
