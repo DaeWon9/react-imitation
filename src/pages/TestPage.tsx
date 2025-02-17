@@ -1,20 +1,37 @@
-import ReactImitation, { useEffect, useState, navigate } from '@ReactImitation';
+import ReactImitation, { useRef, navigate } from '@ReactImitation';
 
 export const TestPage = () => {
-  const [count1, setCount1] = useState(1);
-  const [count2, setCount2] = useState(2);
-  const [count3, setCount3] = useState(3);
+  const counterRef = useRef(10);
+  const divRef1 = useRef<HTMLDivElement>(null);
+  const divRef2 = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    console.log('TestPage가 마운트 되었음');
-  }, []);
+  const incrementCounter = () => {
+    counterRef.current = counterRef.current + 1;
+    console.log(counterRef.current);
+  };
+
+  const changeColor1 = () => {
+    if (divRef1.current) {
+      if (divRef1.current.style.backgroundColor === 'blue') {
+        divRef1.current.style.backgroundColor = 'red';
+      } else {
+        divRef1.current.style.backgroundColor = 'blue';
+      }
+    }
+  };
+
+  const changeColor2 = () => {
+    if (divRef2.current) {
+      if (divRef2.current.style.backgroundColor === 'blue') {
+        divRef2.current.style.backgroundColor = 'red';
+      } else {
+        divRef2.current.style.backgroundColor = 'blue';
+      }
+    }
+  };
 
   return (
     <div>
-      hi
-      <li>{count1}</li>
-      <li>{count2}</li>
-      <li>{count3}</li>
       <button
         onClick={() => {
           navigate('/');
@@ -22,6 +39,20 @@ export const TestPage = () => {
       >
         move to HomePage
       </button>
+
+      <div ref={divRef1} style={'padding: 10px; background-color: red;'}>
+        <button onclick={changeColor1}>색상 변화 버튼</button>
+      </div>
+
+      <div>
+        <button onclick={incrementCounter}>
+          카운터 테스트 {counterRef.current}
+        </button>
+      </div>
+
+      <div ref={divRef2} style={'padding: 10px; background-color: red;'}>
+        <button onclick={changeColor2}>색상 변화 버튼</button>
+      </div>
     </div>
   );
 };
