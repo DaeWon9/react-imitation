@@ -1,5 +1,5 @@
 import { render, createElement } from './vdom';
-import { useState, useEffect } from './hooks';
+import { useState, useEffect, useRef } from './hooks';
 import { createRouter, navigate } from './router';
 
 const ReactImitation = {
@@ -7,9 +7,18 @@ const ReactImitation = {
   createElement,
   useState,
   useEffect,
+  useRef,
   navigate,
   createRouter,
 };
 
-export { render, createElement, useState, useEffect, navigate, createRouter };
+export {
+  render,
+  createElement,
+  useState,
+  useEffect,
+  useRef,
+  navigate,
+  createRouter,
+};
 export default ReactImitation;
