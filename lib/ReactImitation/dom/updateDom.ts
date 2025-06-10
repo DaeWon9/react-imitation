@@ -12,6 +12,32 @@ import {
 import { createDOM } from './createDom';
 import { setAttributes } from './setAttributes';
 
+// 배치 업데이트를 위한 큐
+const updateQueue: (() => void)[] = [];
+let isUpdating = false;
+
+/**
+ * 배치 업데이트를 스케줄링하는 함수
+ */
+function scheduleUpdate(callback: () => void) {
+  updateQueue.push(callback);
+  if (!isUpdating) {
+    isUpdating = true;
+    Promise.resolve().then(flushUpdates);
+  }
+}
+
+/**
+ * 큐에 있는 모든 업데이트를 실행
+ */
+function flushUpdates() {
+  while (updateQueue.length > 0) {
+    const update = updateQueue.shift();
+    update?.();
+  }
+  isUpdating = false;
+}
+
 /**
  * updateDOM 함수는 가상 DOM(Virtual DOM)과 실제 DOM을 비교하고, 변경 사항을 적용합니다.
  *
@@ -30,8 +56,11 @@ export function updateDOM(
   resetAllComponentKeysIndex(); // 모든 컴포넌트 키 인덱스를 초기화
   resetIndexMap(); // 상태 인덱스를 초기화
   resetNstChildIndexMap(); // 자식 인덱스 초기화
-  updateElement($parent, nextVDOM, prevVDOM); // 개별 요소 업데이트
-  setVDOM(nextVDOM); // 최신 가상 DOM 설정
+
+  scheduleUpdate(() => {
+    updateElement($parent, nextVDOM, prevVDOM);
+    setVDOM(nextVDOM);
+  });
 }
 
 /**
@@ -134,13 +163,67 @@ export function updateElement(
       ? (nextVDOM as VDOM).children || []
       : [];
 
-    // 자식 노드 비교 및 업데이트
-    const maxChildren = Math.max(prevChildren.length, nextChildren.length);
-    for (let i = 0; i < maxChildren; i++) {
-      let prevChild = prevChildren[i];
-      let nextChild = nextChildren[i];
+    // 키 기반 재조정
+    const keyedPrevChildren = new Map();
+    const keyedNextChildren = new Map();
 
-      // TextVDOMNode일 때 텍스트 노드로 처리
+    // 이전 자식들을 키로 매핑
+    prevChildren.forEach((child, index) => {
+      if (isVDOM(child) && child.props?.key) {
+        keyedPrevChildren.set(child.props.key, { child, index });
+      }
+    });
+
+    // 새로운 자식들을 키로 매핑
+    nextChildren.forEach((child, index) => {
+      if (isVDOM(child) && child.props?.key) {
+        keyedNextChildren.set(child.props.key, { child, index });
+      }
+    });
+
+    // 키가 있는 자식들 처리
+    keyedNextChildren.forEach(({ child: nextChild, index: nextIndex }, key) => {
+      const prevChildInfo = keyedPrevChildren.get(key);
+      if (prevChildInfo) {
+        // 키가 일치하는 자식 업데이트
+        updateElement($el, nextChild, prevChildInfo.child);
+      } else {
+        // 새로운 자식 추가
+        const $newElement = createDOM(nextChild);
+        if ($newElement) {
+          $el.insertBefore($newElement, $el.childNodes[nextIndex] || null);
+          nextChild.current = $newElement;
+        }
+      }
+    });
+
+    // 제거된 자식들 처리
+    keyedPrevChildren.forEach(({ child: prevChild, index: prevIndex }, key) => {
+      if (!keyedNextChildren.has(key)) {
+        const $child = $el.childNodes[prevIndex];
+        if ($child) {
+          $el.removeChild($child);
+        }
+      }
+    });
+
+    // 키가 없는 자식들 처리 (기존 인덱스 기반 방식)
+    const nonKeyedPrevChildren = prevChildren.filter(
+      (child) => !isVDOM(child) || !child.props?.key
+    );
+    const nonKeyedNextChildren = nextChildren.filter(
+      (child) => !isVDOM(child) || !child.props?.key
+    );
+
+    const maxNonKeyedChildren = Math.max(
+      nonKeyedPrevChildren.length,
+      nonKeyedNextChildren.length
+    );
+
+    for (let i = 0; i < maxNonKeyedChildren; i++) {
+      const prevChild = nonKeyedPrevChildren[i];
+      const nextChild = nonKeyedNextChildren[i];
+
       if (isTextVDOMNode(nextChild)) {
         const $textNode = document.createTextNode(nextChild.toString());
         if (
@@ -152,9 +235,8 @@ export function updateElement(
           $el.appendChild($textNode);
         }
       } else {
-        // VDOM인 경우 기존 방식대로 처리
         if (!prevChild || nextChild !== prevChild) {
-          updateElement($el, nextChild, prevChild); // 변경된 자식만 업데이트
+          updateElement($el, nextChild, prevChild);
         }
       }
     }
